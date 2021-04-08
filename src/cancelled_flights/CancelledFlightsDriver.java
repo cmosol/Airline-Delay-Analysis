@@ -37,6 +37,8 @@ public class CancelledFlightsDriver {
      * mapper and reducer tasks.
      */
     job.setJarByClass(CancelledFlightsDriver.class);
+    // set partitoner class 
+   // set reduce taks to the number of Airlines in the data 
 
     FileInputFormat.setInputPaths(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
