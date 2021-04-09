@@ -75,6 +75,7 @@ public class DelayDriver {
      */
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(DoubleWritable.class);
+    job.setSortComparatorClass(KeyComparator.class);
     
     boolean success = job.waitForCompletion(true);
     System.exit(success ? 0 : 1);
