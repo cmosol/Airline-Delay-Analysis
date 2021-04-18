@@ -3,7 +3,7 @@ from pyspark.sql.functions import asc
 from pyspark.sql.types import IntegerType
 
 #create a spark session
-spark = SparkSession.builder.appName('CancelledFlights').getOrCreate()
+spark = SparkSession.builder.appName('AverageDelay').getOrCreate()
 
 #create data frame from flight data
 df = spark.read.option("header", True).csv('file input path')
