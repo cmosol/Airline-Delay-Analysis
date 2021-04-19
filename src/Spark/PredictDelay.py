@@ -4,6 +4,7 @@ from pyspark.sql.types import IntegerType
 from pyspark.sql.functions import expr, length
 from pyspark.ml.linalg import Vectors
 from pyspark.ml.feature import VectorAssembler
+from pyspark.sql.functions import substring, concat
 
 spark = SparkSession.builder.appName('PredictDelay').getOrCreate()
 
@@ -20,29 +21,26 @@ train = train.withColumn("DEP_DELAY", train["DEP_DELAY"].cast(IntegerType()))
 test = test.withColumn("ARR_DELAY", test["ARR_DELAY"].cast(IntegerType()))
 test = test.withColumn("DEP_DELAY", test["DEP_DELAY"].cast(IntegerType()))
 
-train = train.toPandas()
-test = test.toPandas()
-
 train["INDEX"] = train["FL_DATE"].str[5:7]+train["FL_DATE"].str[8:10]
 test["INDEX"] = test["FL_DATE"].str[5:7]+test["FL_DATE"].str[8:10]
 
-train.head(10)
-test.head(10)
-
-train = train.toDF()
-test = train.toDF()
+train = train.withColumn("INDEX", concat(substring("FL_DATE", 9,8),substring("FL_DATE", 9,9)))
+test = test.withColumn("INDEX", concat(substring("FL_DATE", 9,8),substring("FL_DATE", 9,9)))
 
 train = train.withColumn("INDEX", train["INDEX"].cast(IntegerType()))
 test = test.withColumn("INDEX", test["INDEX"].cast(IntegerType()))
 
-"""train = train.withColumn("TOTAL_DELAY", expr("ARR_DELAY + DEP_DELAY"))
-test = test.withColumn("TOTAL_DELAY", expr("ARR_DELAY + DEP_DELAY"))"""
+train.show(10)
+test.show(10)
 
-feature_cols1 = train.columns[1:]
-feature_cols2 = test.columns[1:]
+train = train.drop("FL_DATE")
+test = test.drop("FL_DATE")
+#train = spark.createDataFrame(train)
+#test = spark.createDataFrame(test)
 
-assembler1 = VectorAssembler(inputCols = feature_cols1, outputCol = "features")
-assembler2 = VectorAssembler(inputCols = feature_cols2, outputCol = "features")
+
+assembler1 = VectorAssembler(inputCols = ["DEP_DELAY", "ARR_DELAY", "INDEX"], outputCol='features')
+
 
 train = assembler1.transform(train)
 test = assembler1.transform(test)
