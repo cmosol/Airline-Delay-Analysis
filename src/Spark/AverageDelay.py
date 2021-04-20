@@ -6,7 +6,7 @@ from pyspark.sql.types import IntegerType
 spark = SparkSession.builder.appName('AverageDelay').getOrCreate()
 
 #create data frame from flight data
-df = spark.read.option("header", True).csv('file input path')
+df = spark.read.option("header", True).csv(r"2018.csv")
 #cast ARR_DELAY and DEP_DELAY to integer
 df = df.withColumn("ARR_DELAY", df["ARR_DELAY"].cast(IntegerType()))
 df = df.withColumn("DEP_DELAY", df["DEP_DELAY"].cast(IntegerType()))
